@@ -167,6 +167,11 @@ def parse_log_pytest_v2(log: str, test_spec: TestSpec) -> dict[str, str]:
             test_case = line.split()
             if len(test_case) >= 2:
                 test_status_map[test_case[0]] = test_case[1]
+        # Support even older pytest versions
+        elif any([x.value in line for x in TestStatus]):
+            test_case = line.split()
+            if len(test_case) >= 2:
+                test_status_map[test_case[0]] = test_case[1]
     return test_status_map
 
 
@@ -259,9 +264,11 @@ parse_log_sqlfluff = parse_log_pytest
 parse_log_xarray = parse_log_pytest
 
 parse_log_pydicom = parse_log_pytest_options
-parse_log_requests = parse_log_pytest_options
 parse_log_pylint = parse_log_pytest_options
 
+# TODO(tianyi):
+# update request parser because older versions of pytest might be in used
+parse_log_requests = parse_log_pytest_v2
 parse_log_astropy = parse_log_pytest_v2
 parse_log_scikit = parse_log_pytest_v2
 parse_log_sphinx = parse_log_pytest_v2
